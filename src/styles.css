@@ -1,0 +1,21 @@
+@import 'tailwindcss';
+
+html {
+  margin: 0;
+  padding: 0;
+  letter-spacing: 0;
+  font-family: DM Sans, sans-serif !important;
+}
+
+.slide-up-enter-active,
+.slide-up-leave-active {
+  transition: all 0.8s ease;
+  transform-origin: center;
+}
+
+.slide-up-enter-from,
+.slide-up-leave-to {
+  opacity: 0;
+  /* transform: translateZ(100%); */
+  transform: scale(1.5);
+}
