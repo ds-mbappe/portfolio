@@ -92,6 +92,7 @@ watch([internalProgress, videoReady], ([p, ready]) => {
   if (p >= 100 && ready && !isFading.value) {
     isFading.value = true
     setTimeout(() => {
+      sessionStorage.setItem('booted', '1')
       router.push({ name: 'login' })
     }, FADE_MS)
   }

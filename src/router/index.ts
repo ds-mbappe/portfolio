@@ -15,11 +15,11 @@ const router = createRouter({
 })
 
 router.beforeEach((to, from) => {
-  const toRoute = to.name
-  const fromRoute = from.name
+  const initialLoad = from.matched.length === 0
+  const booted = sessionStorage.getItem('booted') === '1'
 
-  if ((toRoute === 'home' || toRoute === 'login') && !fromRoute) {
-    return { name: 'boot' }
+  if (initialLoad && !booted && to.name !== 'boot') {
+    return { name: 'boot', replace: true }
   }
 })
 
