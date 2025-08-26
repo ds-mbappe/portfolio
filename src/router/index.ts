@@ -7,6 +7,8 @@ const routes = [
   { path: '/', name: 'boot', component: Boot },
   { path: '/login', name: 'login', component: Login },
   { path: '/home', name: 'home', component: Home },
+
+  { path: '/:pathMatch(.*)*', redirect: { name: 'boot' } },
 ]
 
 const router = createRouter({
@@ -16,9 +18,7 @@ const router = createRouter({
 
 router.beforeEach((to, from) => {
   const initialLoad = from.matched.length === 0
-  const booted = sessionStorage.getItem('booted') === '1'
-
-  if (initialLoad && !booted && to.name !== 'boot') {
+  if (initialLoad && to.name !== 'boot') {
     return { name: 'boot', replace: true }
   }
 })
