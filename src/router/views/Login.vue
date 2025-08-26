@@ -73,6 +73,6 @@ const onVideoReady = () => {
 }
 
 const navigateToHome = () => {
-  router.push('home')
+  router.push({ name: 'home' })
 }
 </script>
