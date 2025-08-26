@@ -1,9 +1,11 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import Login from './views/Login.vue'
 import Home from './views/Home.vue'
+import Boot from './views/Boot.vue'
 
 const routes = [
-  { path: '/', name: 'login', component: Login },
+  { path: '/', name: 'boot', component: Boot },
+  { path: '/login', name: 'login', component: Login },
   { path: '/home', name: 'home', component: Home },
 ]
 
@@ -16,18 +18,18 @@ router.beforeEach((to, from) => {
   const toRoute = to.name
   const fromRoute = from.name
 
-  if (toRoute === 'home' && !fromRoute) {
-    return { name: 'login' }
+  if ((toRoute === 'home' || toRoute === 'login') && !fromRoute) {
+    return { name: 'boot' }
   }
 })
 
-router.afterEach((to, from) => {
-  const toRoute = to.name
-  const fromRoute = from.name
+// router.afterEach((to, from) => {
+//   const toRoute = to.name
+//   const fromRoute = from.name
 
-  if (toRoute === 'home' && fromRoute === 'login') {
-    to.meta.transition = 'slide-up'
-  }
-})
+//   if (toRoute === 'home' && fromRoute === 'login') {
+//     to.meta.transition = 'slide-up'
+//   }
+// })
 
 export default router

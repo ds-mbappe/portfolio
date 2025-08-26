@@ -7,15 +7,13 @@ html {
   font-family: DM Sans, sans-serif !important;
 }
 
-.slide-up-enter-active,
+/* .slide-up-enter-active,
 .slide-up-leave-active {
-  transition: all 0.8s ease;
-  transform-origin: center;
+  transition: all 0.75s ease;
 }
 
 .slide-up-enter-from,
 .slide-up-leave-to {
   opacity: 0;
-  /* transform: translateZ(100%); */
-  transform: scale(1.5);
-}
+  transform: translateY(-50%);
+} */

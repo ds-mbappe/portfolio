@@ -1,13 +1,25 @@
 <template>
   <div
-    class="w-auto min-w-full min-h-[100dvh] max-w-none bg-contain bg-center flex flex-col items-center justify-center select-none cursor-default absolute"
-    :style="{
-      'background-image': sunrise ? `url('${sunrise}')` : '',
-      'background-size': 'cover',
-    }"
+    class="relative w-auto min-w-full min-h-[100dvh] max-w-none flex flex-col items-center justify-center select-none cursor-default"
     @click="navigateToHome"
+    @contextmenu.prevent
   >
-    <div class="flex flex-col items-center flex-1">
+    <video
+      ref="bg"
+      class="absolute inset-0 w-full h-full object-cover pointer-events-none"
+      :class="videoVisible ? 'opacity-100' : 'opacity-0'"
+      :src="sunrise"
+      autoplay
+      muted
+      loop
+      playsinline
+      preload="auto"
+      aria-hidden="true"
+      @loadeddata="onVideoReady"
+      @canplay="onVideoReady"
+    ></video>
+
+    <div class="relative z-10 flex flex-col items-center flex-1 w-full">
       <div class="w-full h-20"></div>
 
       <div class="flex h-full flex-col items-center">
@@ -22,25 +34,14 @@
 
       <div class="flex-1"></div>
 
-      <div class="flex flex-col gap-2 items-center">
-        <div class="flex flex-col gap-1 items-center">
-          <!-- <v-img
-            :src="siri"
-            :width="64"
-            :height="64"
-            :lazy-src="siri"
-            cover
-            class="rounded-full"
-          /> -->
-
+      <div class="flex flex-col gap-2.5 items-center">
+        <div class="flex flex-col items-center">
           <v-avatar
             :size="64"
             :image="siri"
           />
 
-          <p class="text-white font-semibold text-sm">
-            {{ 'Guest' }}
-          </p>
+          <p class="text-white font-semibold text-sm">Daniel Stéphane MBAPPE</p>
         </div>
 
         <p class="text-white font-medium text-sm">
@@ -54,19 +55,24 @@
 </template>
 
 <script setup lang="ts">
-import sunrise from '@/assets/wallpapers/Sequoia-Sunrise.png'
+import sunrise from '@/assets/wallpapers/Sequoia-Sunrise.mov'
 import siri from '@/assets/siri.png';
 import { useRouter } from 'vue-router';
 import { useClock } from '@/composables/useClock'
+import { ref } from 'vue';
 
-const router  = useRouter()
+const router = useRouter()
 const { currentTime, currentDate } = useClock()
+
+const videoVisible = ref(false)
+const bg = ref<HTMLVideoElement | null>(null)
+
+const onVideoReady = () => {
+  bg.value?.play().catch(() => {})
+  videoVisible.value = true
+}
 
 const navigateToHome = () => {
   router.push('home')
 }
-
-// const toggleAnimation = () => {
-//   document.querySelector('.login').classList.add('clicked')
-// }
 </script>
