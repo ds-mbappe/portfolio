@@ -15,10 +15,11 @@ const router = createRouter({
 })
 
 router.beforeEach((to, from) => {
-  const initialLoad = from.matched.length === 0
-  
-  if (initialLoad && (to.name === 'home' || to.name === 'login')) {
-    return { name: 'boot', replace: true }
+  const toRoute = to.name
+  const fromRoute = from.name
+
+  if ((toRoute === 'home' || toRoute === 'login') && !fromRoute) {
+    return { name: 'boot' }
   }
 })
 
