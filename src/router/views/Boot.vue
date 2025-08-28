@@ -36,11 +36,11 @@
 import { useRouter } from 'vue-router';
 import { ref, watch, onMounted, computed } from 'vue';
 import logoUrl from '@/assets/apple_logo.png';
-import sunrise from '@/assets/wallpapers/Sequoia-Sunrise.mov'
+// import sunrise from '@/assets/wallpapers/Sequoia-Sunrise.mov'
 
 const router = useRouter()
 
-const DURATION_MS = 8000
+const DURATION_MS = 3000
 const FADE_MS = 250
 
 const internalProgress = ref(0)
@@ -65,28 +65,28 @@ const startAuto = () => {
   requestAnimationFrame(run)
 }
 
-const preloadVideo = (): Promise<void> => {
-  return new Promise((resolve) => {
-    const v = document.createElement('video')
-    v.src = sunrise
-    v.muted = true
-    v.preload = 'auto'
-    v.playsInline = true
+// const preloadVideo = (): Promise<void> => {
+//   return new Promise((resolve) => {
+//     const v = document.createElement('video')
+//     v.src = sunrise
+//     v.muted = true
+//     v.preload = 'auto'
+//     v.playsInline = true
 
-    const done = () => {
-      cleanup()
-      resolve()
-    }
-    const cleanup = () => {
-      v.removeEventListener('canplaythrough', done)
-      v.removeEventListener('loadeddata', done)
-    }
+//     const done = () => {
+//       cleanup()
+//       resolve()
+//     }
+//     const cleanup = () => {
+//       v.removeEventListener('canplaythrough', done)
+//       v.removeEventListener('loadeddata', done)
+//     }
 
-    v.addEventListener('canplaythrough', done, { once: true })
-    v.addEventListener('loadeddata', done, { once: true })
-    v.load()
-  })
-}
+//     v.addEventListener('canplaythrough', done, { once: true })
+//     v.addEventListener('loadeddata', done, { once: true })
+//     v.load()
+//   })
+// }
 
 watch([internalProgress, videoReady], ([p, ready]) => {
   if (p >= 100 && ready && !isFading.value) {
@@ -99,7 +99,7 @@ watch([internalProgress, videoReady], ([p, ready]) => {
 
 onMounted(async () => {
   startAuto()
-  await preloadVideo()
+  // await preloadVideo()
   videoReady.value = true
 })
 </script>
