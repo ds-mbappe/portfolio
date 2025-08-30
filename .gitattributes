@@ -1,2 +1,2 @@
 * text=auto eol=lf
-src/assets/wallpapers/Sequoia-Sunrise.mov filter=lfs diff=lfs merge=lfs -text
+src/assets/wallpapers/Sequoia-Sunrise.mp4 filter=lfs diff=lfs merge=lfs -text
