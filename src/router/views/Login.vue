@@ -35,9 +35,9 @@
       <div class="flex-1"></div>
 
       <div class="flex flex-col gap-2.5 items-center">
-        <div class="flex flex-col items-center">
+        <div class="flex flex-col items-center gap-6">
           <v-avatar
-            :size="64"
+            :size="56"
             :image="siri"
           />
 
@@ -55,7 +55,7 @@
 </template>
 
 <script setup lang="ts">
-import sunrise from '@/assets/wallpapers/Sequoia-Sunrise.mov'
+import sunrise from '@/assets/wallpapers/Sequoia-Sunrise.mp4'
 import siri from '@/assets/siri.png';
 import { useRouter } from 'vue-router';
 import { useClock } from '@/composables/useClock'
@@ -68,7 +68,9 @@ const videoVisible = ref(false)
 const bg = ref<HTMLVideoElement | null>(null)
 
 const onVideoReady = () => {
-  bg.value?.play().catch(() => {})
+  bg.value?.play().catch((error) => {
+    console.log(error)
+  })
   videoVisible.value = true
 }
 
