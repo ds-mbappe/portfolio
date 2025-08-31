@@ -15,8 +15,7 @@
       playsinline
       preload="auto"
       aria-hidden="true"
-      @loadeddata="onVideoReady"
-      @canplay="onVideoReady"
+      @canplay.once="onVideoReady"
     ></video>
 
     <div class="relative z-10 flex flex-col items-center flex-1 w-full">
