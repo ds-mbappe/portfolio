@@ -10,3 +10,12 @@ export interface Photo {
   dataUrl: string
   capturedAt: Date
 }
+
+// Single bottom bar Dock item
+export type AppItem = {
+  id: string
+  logo: string
+  title: string
+  width: number
+  opened?: boolean
+}

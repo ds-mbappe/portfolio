@@ -17,6 +17,7 @@ import type { Photo } from '@/types'
 const bottomItems = [
   {
     id: 'finder',
+    title: 'Finder',
     logo: finder,
     width: 62,
     opened: true,
@@ -25,6 +26,7 @@ const bottomItems = [
   },
   {
     id: 'safari',
+    title: 'Safari',
     logo: safari,
     width: 62,
     opened: false,
@@ -33,6 +35,7 @@ const bottomItems = [
   },
   {
     id: 'terminal',
+    title: 'Terminal',
     logo: terminal,
     width: 62,
     opened: false,
@@ -41,6 +44,7 @@ const bottomItems = [
   },
   {
     id: 'photos',
+    title: 'Photos',
     logo: photos,
     width: 62,
     opened: false,
@@ -49,6 +53,7 @@ const bottomItems = [
   },
   {
     id: 'facetime',
+    title: 'Facetime',
     logo: facetime,
     width: 62,
     opened: false,
@@ -57,6 +62,7 @@ const bottomItems = [
   },
   {
     id: 'maps',
+    title: 'Maps',
     logo: maps,
     width: 62,
     opened: false,
@@ -65,6 +71,7 @@ const bottomItems = [
   },
   {
     id: 'calendar',
+    title: 'Calendar',
     logo: calendar,
     width: 62,
     opened: false,
@@ -73,6 +80,7 @@ const bottomItems = [
   },
   {
     id: 'notes',
+    title: 'Notes',
     logo: notes,
     width: 62,
     opened: false,
@@ -81,6 +89,7 @@ const bottomItems = [
   },
   {
     id: 'calculator',
+    title: 'Calculator',
     logo: calculator,
     width: 62,
     opened: false,
@@ -89,6 +98,7 @@ const bottomItems = [
   },
   {
     id: 'settings',
+    title: 'Settings',
     logo: settings,
     width: 62,
     opened: false,
