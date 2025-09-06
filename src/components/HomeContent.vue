@@ -54,6 +54,18 @@
         >
           <photos />
         </draggable-dialog>
+
+        <draggable-dialog
+          v-model="bottomItems[5].opened"
+          :id="'maps'"
+          width="768px"
+          height="560px"
+          :drop-zone="dropZone"
+          :z-index="bottomItems[5].zIndex"
+          title="Maps"
+        >
+          <maps />
+        </draggable-dialog>
       </div>
     </div>
     
@@ -74,6 +86,7 @@ import { useGlobalStore } from '@/stores/global'
 import { storeToRefs } from 'pinia'
 import Facetime from './miniApps/Facetime.vue'
 import Photos from './miniApps/Photos.vue'
+import Maps from './miniApps/Maps.vue'
 
 const { bottomItems } = storeToRefs(useGlobalStore())
 
