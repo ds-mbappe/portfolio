@@ -19,3 +19,11 @@ export type AppItem = {
   width: number
   opened?: boolean
 }
+
+export type Folder = {
+  id: string
+  name: string
+  x: number
+  y: number
+  isRenaming?: boolean
+}

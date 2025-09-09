@@ -1,8 +1,12 @@
 <template>
   <div
     v-if="modelValue"
-    class="absolute inset-0 w-full h-full cursor-default select-none"
     aria-hidden="false"
+    class="absolute inset-0 cursor-default select-none"
+    :class="{
+      'w-full h-full': isMaximized,
+      'w-fit h-fit': !isMaximized,
+    }"
   >
     <!-- Overlay confined to the drop zone -->
     <div
