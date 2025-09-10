@@ -115,7 +115,7 @@ export const useGlobalStore = defineStore('global', {
     folders: [],
     files: [],
     cameraPhotos: [] as Photo[],
-    deletedElements: [],
+    deletedElements: [] as unknown[],
     terminalItems: [],
     bottomItems: bottomItems,
     trashActive: false,

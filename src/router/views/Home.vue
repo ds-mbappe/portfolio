@@ -26,13 +26,14 @@ import HomeTopBar from '@/components/HomeTopBar.vue';
 import HomeBottomBar from '@/components/HomeBottomBar.vue';
 import HomeContent from '@/components/HomeContent.vue';
 
-const background = ref(sunrise)
 const isFading = ref(true)
+const background = ref(sunrise)
 
 let fallbackTimer: number | null = null
 
 onMounted(() => {
   const img = new Image()
+
   img.src = background.value
   img.decode?.().then(() => { isFading.value = false }).catch(() => {})
   img.onload = () => { isFading.value = false }
@@ -43,6 +44,8 @@ onMounted(() => {
 })
 
 onUnmounted(() => {
-  if (fallbackTimer !== null) clearTimeout(fallbackTimer)
+  if (fallbackTimer !== null) {
+    clearTimeout(fallbackTimer)
+  }
 })
 </script>

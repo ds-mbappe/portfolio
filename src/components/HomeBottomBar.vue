@@ -9,19 +9,17 @@
 
     <v-divider vertical class="my-2 text-white" :thickness="2"></v-divider>
 
-    <!-- Trash not empty -->
-    <div v-if="deletedElements?.length" class="flex flex-col items-center justify-center relative transition-all duration-300 gap-1">
-      <v-img :lazy-src="trashFull" :src="trashFull" :aspect-ratio="1" :width="52 * 1.25" />
-
-      <div v-if="trashActive" class="w-1 h-1 rounded-full absolute -bottom-1.5 bg-white dark:bg-black" />
-    </div>
-
-    <!-- Trash empty -->
-    <div v-else class="flex flex-col items-center justify-center relative transition-all duration-300 gap-1">
-      <v-img :lazy-src="trash" :src="trash" :aspect-ratio="1" :width="52 * 1.25" />
-
-      <div v-if="trashActive" class="w-1 h-1 rounded-full absolute -bottom-1.5 bg-white dark:bg-black" />
-    </div>
+    <home-bottom-bar-dock-item
+      key="trash"
+      :app="{
+        id: 'trash',
+        logo: deletedElements?.length
+          ? trashFull
+          : trash,
+        title: 'Trash',
+        width: 55,
+      }"
+    />
   </div>
 </template>
 
@@ -31,8 +29,29 @@ import trash from '@/assets/trash.png';
 import trashFull from '@/assets/trash_full.png';
 import { useGlobalStore } from '@/stores/global';
 import HomeBottomBarDockItem from './HomeBottomBarDockItem.vue';
+import { onMounted } from 'vue';
 
-const { deletedElements, bottomItems, trashActive, initialWindowsIndex } = storeToRefs(useGlobalStore());
+const deletedFoldersPersistKey = 'desktop.folders.deleted'
+
+const {
+  bottomItems,
+  deletedElements,
+  initialWindowsIndex,
+} = storeToRefs(useGlobalStore());
+
+onMounted(() => {
+  try {
+    const raw = localStorage.getItem(deletedFoldersPersistKey)
+
+    if (raw) {
+      const parsed = JSON.parse(raw) as unknown[]
+
+      deletedElements.value = parsed
+    }
+  } catch {
+    
+  }
+})
 
 const openApp = (id: string) => {
   if (id) {

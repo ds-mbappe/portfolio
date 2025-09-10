@@ -19,38 +19,40 @@
         <div
           v-for="f in folders"
           :key="f.id"
-          class="absolute flex flex-col items-center select-none rounded-lg"
-          v-draggable="{ id: f.id.toString() }"
+          class="absolute flex flex-col items-center rounded-lg cursor-default"
+          v-draggable="{
+            id: f.id.toString(),
+            handle: '.handle-folder'
+          }"
           :class="{
-            // 'backdrop-blur-3xl': f.id === selectedId,
-            'bg-blue-500': f.id === selectedId
+            'bg-blue-800': f.id === selectedId && !f.isRenaming
           }"
           @contextmenu.prevent.stop="openCtx($event, f.id)"
           @dblclick.stop
-          @click.stop="select(f.id)"
+          @click.stop="selectFolder(f.id)"
         >
           <v-img
             :src="folderLogo"
             :aspect-ratio="1"
             :lazy-src="folderLogo"
-            class="w-[100px] pointer-events-none"
+            class="w-[100px] select-none handle-folder"
           />
 
           <!-- Name or inline rename -->
           <div v-if="f.isRenaming">
             <input
-              ref="renameInput"
               v-model="renameDraft"
-              class="w-fit rounded bg-black/70 text-white text-xs px-2 outline-none border border-white/30"
-              @keydown.enter.prevent="confirmRename(f.id)"
-              @keydown.esc.prevent="cancelRename(f.id)"
-              @blur="confirmRename(f.id)"
+              ref="renameInput"
+              class="!w-fit rounded text-white bg-blue-800 text-sm px-2 outline-none border border-white/30"
+              @keydown.enter.prevent="renameFolder(f.id, renameDraft)"
+              @keydown.esc.prevent="cancelRenameFolder(f.id)"
+              @blur="renameFolder(f.id, renameDraft)"
             />
           </div>
           
           <p
             v-else
-            class="text-white text-sm text-center px-1 rounded -translate-y-1.5"
+            class="text-white text-sm text-center px-1 rounded -translate-y-1.5 select-none"
             :class="f.id === selectedId ? 'bg-blue-800' : ''"
           >
             {{ f.name }}
@@ -113,13 +115,14 @@
           <maps />
         </draggable-dialog>
 
-        <context-menu
+        <ContextMenu
           v-if="ctx.visible"
           :x="ctx.x"
           :y="ctx.y"
-          :on-new="createFolderAtCtx"
-          :on-rename="startRenameCtx"
-          :can-rename="!!ctx.targetId"
+          :is-selected="isFolderSelected"
+          @new="createFolderAtCtx"
+          @delete="deleteFolderAndCloseMenu"
+          @rename="startRenameCtx"
           @close="closeCtx"
         />
       </div>
@@ -127,13 +130,12 @@
     
     <!-- Toolbar -->
     <div class="w-full h-[120px] z-0 bg-transparent">
-      <!-- <button @click="terminalOpened = !terminalOpened" class="text-white">CHANGE OPEN</button> -->
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { nextTick, reactive, ref } from 'vue'
+import { computed, onMounted, reactive, ref } from 'vue'
 import { useDraggableArea } from "@/composables/useDraggableArea"
 import DraggableDialog from './DraggableDialog.vue'
 import Terminal from './miniApps/Terminal.vue'
@@ -144,26 +146,77 @@ import Facetime from './miniApps/Facetime.vue'
 import Photos from './miniApps/Photos.vue'
 import Maps from './miniApps/Maps.vue'
 import ContextMenu from './ContextMenu.vue'
-import type { Folder } from '@/types'
 import folderLogo from '@/assets/folder.png'
+import { useFolderStore } from '@/stores/folder'
+import { useDraggablesStore } from '@/stores/draggables'
 
-const { bottomItems } = storeToRefs(useGlobalStore())
+const {
+  setPos,
+  loadItems: loadDraggables
+} = useDraggablesStore();
+const {
+  // selected,
+  loadFolders,
+  select: selectFolder,
+  confirmRename: renameFolder,
+  cancelRename: cancelRenameFolder,
+  startRename: startRenamingFolder,
+  createFolderAt: createNewFolder,
+  removeFolder: deleteFolder,
+} = useFolderStore();
 
-const dropZone = ref<HTMLElement>()
-const folders = ref<Folder[]>([
-  { id: crypto.randomUUID(), name: 'Documents', x: 40, y: 80 },
-  { id: crypto.randomUUID(), name: 'Pictures',  x: 40, y: 180 },
-])
+const { bottomItems } = storeToRefs(useGlobalStore());
+const { folders, selectedId } = storeToRefs(useFolderStore());
+
+onMounted(() => {
+  loadFolders()
+  loadDraggables()
+
+  // Shortcuts
+  window.addEventListener('keydown', (e) => {
+    // const cmd = e.metaKey || e.ctrlKey
+    // if (cmd && e.shiftKey && e.key.toLowerCase() === 'n') {
+    //   e.preventDefault()
+
+    //   const id = createNewFolder(window.innerWidth / 2, window.innerHeight / 2)
+
+    //   renameDraft.value = folders.value.find(f => f.id === id)?.name ?? ''
+
+    //   nextTick(() => renameInput.value?.focus())
+    // }
+
+    // if (e.ctrlKey && e.key === 'F2' && selectedId.value) {
+    //   e.preventDefault()
+
+    //   startRenamingFolder(selectedId.value)
+
+    //   renameDraft.value = selected?.name ?? ''
+
+    //   nextTick(() => renameInput.value?.focus())
+    // }
+    if ((e.key === 'Delete' || e.key === 'Backspace') && selectedId.value) {
+      e.preventDefault()
+
+      deleteFolder(selectedId.value)
+    }
+  })
+})
+
 const renameDraft = ref('')
-const selectedId = ref<string | null>(null)
+const dropZone = ref<HTMLElement>()
 const renameInput = ref<HTMLInputElement | null>(null)
+
 const { vDraggable } = useDraggableArea(dropZone)
 
 const ctx = reactive({
   x: 0,
   y: 0,
   visible: false,
-  targetId: null as string | null, // folder id if clicked on a folder
+  targetId: null as string | null,
+})
+
+const isFolderSelected = computed(() => {
+  return ctx.targetId !== null && selectedId.value !== null
 })
 
 const openCtx = (e: MouseEvent, folderId: string | null) => {
@@ -173,41 +226,6 @@ const openCtx = (e: MouseEvent, folderId: string | null) => {
   ctx.targetId = folderId
 }
 
-const select = (id: string) => {
-  selectedId.value = id
-}
-
-const makeUniqueAgainstOthers = (candidate: string, id: string) => {
-  const taken = new Set(folders.value.filter(f => f.id !== id).map(f => f.name))
-
-  if (!taken.has(candidate)) return candidate
-
-  let n = 2
-  
-  while (taken.has(`${candidate} ${n}`)) n++
-  return `${candidate} (${n})`
-}
-
-
-const confirmRename = (id: string) => {
-  const f = folders.value.find(f => f.id === id)
-
-  if (!f) return
-
-  const trimmed = renameDraft.value.trim()
-
-  f.name = trimmed ? makeUniqueAgainstOthers(trimmed, id) : f.name
-  f.isRenaming = false
-}
-
-const cancelRename = (id: string) => {
-  const f = folders.value.find(f => f.id === id)
-
-  if (!f) return
-
-  f.isRenaming = false
-}
-
 const closeCtx = () => {
   ctx.visible = false
   ctx.targetId = null
@@ -215,52 +233,33 @@ const closeCtx = () => {
   selectedId.value = null
 }
 
-const uniqueName = (base = 'Untitled Folder') => {
-  const names = new Set(folders.value.map(f => f.name))
-
-  if (!names.has(base)) return base
-
-  let n = 2
-
-  while (names.has(`${base} ${n}`)) n++
-  return `${base} (${n})`
-}
-
-const createFolderAt = (x: number, y: number) => {
-  const id = crypto.randomUUID()
-  
-  const f: Folder = { id, name: uniqueName(), x: Math.max(16, x - 56), y: Math.max(16, y - 32), isRenaming: true }
-
-  folders.value.push(f)
-  selectedId.value = id
-  renameDraft.value = f.name
-
-  nextTick(() => renameInput.value?.select())
-}
-
-const startRename = (id: string) => {
-  const f = folders.value.find(f => f.id === id)
-
-  if (!f) return
-
-  folders.value.forEach(x => (x.isRenaming = false))
-
-  f.isRenaming = true
-
-  renameDraft.value = f.name
-
-  nextTick(() => renameInput.value?.select())
-}
-
 const startRenameCtx = () => {
   if (!ctx.targetId) return
 
-  startRename(ctx.targetId)
+  startRenamingFolder(ctx.targetId)
+
+  renameDraft.value = folders.value.find(f => f.id === ctx.targetId)?.name ?? ''
+
+  // nextTick(() => renameInput.value?.blur())
+
   closeCtx()
 }
 
 const createFolderAtCtx = () => {
-  createFolderAt(ctx.x, ctx.y)
+  const id = createNewFolder(ctx.x, ctx.y)
+
+  setPos(id, ctx.x, ctx.y)
+
+  renameDraft.value = folders.value.find(f => f.id === id)?.name ?? ''
+
+  // nextTick(() => renameInput.value?.blur())
+
+  closeCtx()
+}
+
+const deleteFolderAndCloseMenu = () => {
+  deleteFolder(selectedId.value ?? '')
+
   closeCtx()
 }
 </script>

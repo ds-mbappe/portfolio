@@ -1,18 +1,57 @@
 <template>
   <div
-    class="fixed z-50 min-w-[130px] rounded-md border border-white/20 bg-black/80 text-white backdrop-blur-sm shadow-xl"
+    class="flex flex-col fixed z-50 min-w-[130px] rounded-lg border outline outline-white/20 bg-gray-900 text-white backdrop-blur-sm shadow-xl select-none cursor-default overflow-hidden"
     :style="{ left: x + 'px', top: y + 'px' }"
     @click.stop
   >
-    <button class="w-full text-left px-3 py-2 hover:bg-white/10" @click="onNew()">New Folder</button>
-
-    <button
-      class="w-full text-left px-3 py-2 hover:bg-white/10 disabled:opacity-40 disabled:cursor-default"
-      :disabled="!canRename"
-      @click="onRename()"
+    <div
+      class="w-full hover:bg-blue-600 py-0.5"
+      @click="$emit('new')"
     >
-      Rename
-    </button>
+      <span class="w-full px-2 text-sm">
+        {{ 'New Folder' }}
+      </span>
+    </div>
+
+    <div
+      v-if="isSelected"
+      class="w-full hover:bg-blue-600"
+      @click="$emit('rename')"
+    >
+      <span class="w-full px-2 text-sm">
+        {{ 'Rename' }}
+      </span>
+    </div>
+
+    <div
+      v-if="isSelected"
+      class="w-full hover:bg-blue-600"
+      @click="$emit('delete')"
+    >
+      <span class="w-full px-2 text-sm">
+        {{ 'Delete' }}
+      </span>
+    </div>
+
+    <v-divider class="self-center w-[90%] my-1" />
+
+    <div
+      class="w-full hover:bg-blue-600 py-0.5"
+      @click="$emit('get-info')"
+    >
+      <span class="w-full px-2 text-sm">
+        {{ 'Get info' }}
+      </span>
+    </div>
+
+    <div
+      class="w-full hover:bg-blue-600 py-0.5"
+      @click="$emit('change-wallpaper')"
+    >
+      <span class="w-full px-2 text-sm">
+        {{ 'Change wallpaper...' }}
+      </span>
+    </div>
   </div>
 </template>
 
@@ -20,10 +59,15 @@
 defineProps<{
   x: number
   y: number
-  canRename: boolean
-  onNew: () => void
-  onRename: () => void
+  isSelected: boolean
 }>()
 
-defineEmits<{ (e: 'close'): void }>()
+defineEmits<{
+  (e: 'new'): void;
+  (e: 'rename'): void;
+  (e: 'close'): void;
+  (e: 'get-info'): void;
+  (e: 'delete'): void;
+  (e: 'change-wallpaper'): void;
+}>()
 </script>
