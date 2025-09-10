@@ -4,7 +4,9 @@ html {
   margin: 0;
   padding: 0;
   letter-spacing: 0;
-  font-family: DM Sans, sans-serif !important;
+  font-family:
+    DM Sans,
+    sans-serif !important;
 }
 
 /* .slide-up-enter-active,

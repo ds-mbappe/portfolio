@@ -5,23 +5,16 @@
       v-if="permission === 'denied' || permission === 'prompt'"
       class="h-full w-full flex flex-col gap-6 text-center items-center justify-center"
     >
-      <h1 class="text-2xl font-semibold">
-        Camera Access Needed
-      </h1>
+      <h1 class="text-2xl font-semibold">Camera Access Needed</h1>
 
-      <p
-        v-if="error"
-        class="text-sm text-red-600"
-      >
+      <p v-if="error" class="text-sm text-red-600">
         {{ error }}
       </p>
 
-      <div
-        v-else
-        class="flex flex-col gap-4 items-center"
-      >
+      <div v-else class="flex flex-col gap-4 items-center">
         <p class="max-w-md mx-auto text-gray-600">
-          To take pictures, please allow access to your camera. Taken pictures are not saved anywhere, and are only shown for UX purposes.
+          To take pictures, please allow access to your camera. Taken pictures are not saved
+          anywhere, and are only shown for UX purposes.
         </p>
 
         <v-btn
@@ -36,7 +29,10 @@
     </div>
 
     <!-- Main camera preview UI & controls -->
-    <div v-else class="w-full h-full overflow-hidden flex-1 bg-black relative flex items-center justify-center">
+    <div
+      v-else
+      class="w-full h-full overflow-hidden flex-1 bg-black relative flex items-center justify-center"
+    >
       <!-- Live preview -->
       <video
         ref="videoEl"
@@ -48,10 +44,7 @@
 
       <!-- Transition to make the taken picture appear -->
       <transition name="fade-transition">
-        <div
-          v-if="latestPhotoUrl"
-          class="absolute bottom-5 left-5"
-        >
+        <div v-if="latestPhotoUrl" class="absolute bottom-5 left-5">
           <img
             :src="latestPhotoUrl"
             alt="Latest photo"
@@ -77,11 +70,11 @@
 </template>
 
 <script setup lang="ts">
-import { storeToRefs } from 'pinia';
-import type { Photo } from '@/types';
-import { useGlobalStore } from '@/stores/global';
-import { debounce } from 'vuetify/lib/util/helpers.mjs';
-import { onMounted, onBeforeUnmount, ref, computed, watch, nextTick } from 'vue';
+import { storeToRefs } from 'pinia'
+import type { Photo } from '@/types'
+import { useGlobalStore } from '@/stores/global'
+import { debounce } from 'vuetify/lib/util/helpers.mjs'
+import { onMounted, onBeforeUnmount, ref, computed, watch, nextTick } from 'vue'
 
 const { cameraPhotos: photos, bottomItems, initialWindowsIndex } = storeToRefs(useGlobalStore())
 
@@ -101,7 +94,10 @@ const latestPhotoUrl = computed<string | null>(() => {
 const requestCameraAccess = async (): Promise<void> => {
   error.value = null
   try {
-    const s = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' }, audio: false })
+    const s = await navigator.mediaDevices.getUserMedia({
+      video: { facingMode: 'environment' },
+      audio: false,
+    })
     permission.value = 'granted'
     await nextTick()
     await attachStream(s)
@@ -151,7 +147,10 @@ const stopStream = (): void => {
 
 const startCamera = async (): Promise<void> => {
   try {
-    const s = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' }, audio: false })
+    const s = await navigator.mediaDevices.getUserMedia({
+      video: { facingMode: 'environment' },
+      audio: false,
+    })
     await attachStream(s)
   } catch (e) {
     console.error(e)
@@ -194,23 +193,25 @@ const takePhoto = debounce(async (): Promise<void> => {
 }, 250)
 
 const openPhotosApp = debounce(() => {
-  const clickedApp = bottomItems.value.find(el => el.id === 'photos')
+  const clickedApp = bottomItems.value.find((el) => el.id === 'photos')
 
   if (clickedApp) {
     for (const item of bottomItems.value) {
-      item.active = false;
+      item.active = false
     }
-    
-    clickedApp.zIndex = initialWindowsIndex.value += 1;
-    clickedApp.opened = true;
-    clickedApp.active = true;
+
+    clickedApp.zIndex = initialWindowsIndex.value += 1
+    clickedApp.opened = true
+    clickedApp.active = true
   }
 }, 250)
 
 onMounted(async () => {
   try {
     if ('permissions' in navigator) {
-      const status: PermissionStatus = await navigator.permissions.query({ name: 'camera' as PermissionName })
+      const status: PermissionStatus = await navigator.permissions.query({
+        name: 'camera' as PermissionName,
+      })
       permission.value = status.state as PermissionState
       status.onchange = () => {
         permission.value = status.state as PermissionState
@@ -237,7 +238,7 @@ watch(
       el.play().catch((e) => console.warn('Autoplay prevented:', e))
     }
   },
-  { immediate: true }
+  { immediate: true },
 )
 
 watch(
@@ -247,6 +248,6 @@ watch(
       void startCamera()
     }
   },
-  { immediate: true }
+  { immediate: true },
 )
 </script>

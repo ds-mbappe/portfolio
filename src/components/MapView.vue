@@ -3,11 +3,17 @@
     <div ref="mapEl" class="relative flex flex-col w-full h-full inset-0"></div>
 
     <!-- Loader overlays but does not remove the map div -->
-    <div v-if="loading" class="absolute inset-0 flex items-center justify-center bg-white/70 dark:bg-black/40">
+    <div
+      v-if="loading"
+      class="absolute inset-0 flex items-center justify-center bg-white/70 dark:bg-black/40"
+    >
       <v-progress-circular indeterminate />
     </div>
 
-    <div v-if="error" class="absolute left-1/2 top-1/2 -translate-x-1/2 rounded bg-red-600 text-white shadow">
+    <div
+      v-if="error"
+      class="absolute left-1/2 top-1/2 -translate-x-1/2 rounded bg-red-600 text-white shadow"
+    >
       {{ error }}
     </div>
   </div>
@@ -19,7 +25,9 @@ import { Loader } from '@googlemaps/js-api-loader'
 
 const mapEl = ref<HTMLDivElement | null>(null)
 const map = shallowRef<google.maps.Map | null>(null)
-const marker = shallowRef<google.maps.marker.AdvancedMarkerElement | google.maps.Marker | null>(null)
+const marker = shallowRef<google.maps.marker.AdvancedMarkerElement | google.maps.Marker | null>(
+  null,
+)
 const loading = ref(true)
 const error = ref<string | null>(null)
 
@@ -40,7 +48,9 @@ onMounted(async () => {
 
     if (!mapEl.value) throw new Error('Map container missing')
 
-    const { AdvancedMarkerElement, Marker } = await google.maps.importLibrary('marker') as google.maps.MarkerLibrary
+    const { AdvancedMarkerElement, Marker } = (await google.maps.importLibrary(
+      'marker',
+    )) as google.maps.MarkerLibrary
 
     // Create map
     map.value = new google.maps.Map(mapEl.value, {
@@ -81,12 +91,12 @@ onMounted(async () => {
           error.value = 'You need to grant location access to view the Map.'
           // optional: leave map centered at initialCenter with no marker
         },
-        { enableHighAccuracy: true, timeout: 5000 }
+        { enableHighAccuracy: true, timeout: 5000 },
       )
     }
 
     loading.value = false
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (e: any) {
     error.value = e?.message ?? 'Failed to load map'
     loading.value = false

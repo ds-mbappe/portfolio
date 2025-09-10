@@ -11,15 +11,13 @@ export const useDraggablesStore = defineStore('draggables', {
     loadItems() {
       try {
         const raw = localStorage.getItem(persistKey)
-        
+
         if (raw) {
           const parsed = JSON.parse(raw) as Record<string, DragState>
 
           this.items = parsed
         }
-      } catch {
-        
-      }
+      } catch {}
     },
     upsert(id: string, patch: Partial<DragState>) {
       const cur = this.items[id] || { x: 0, y: 0, isDragging: false }

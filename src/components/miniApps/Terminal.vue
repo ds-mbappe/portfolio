@@ -62,7 +62,11 @@ type FileNode = null
 type DirNode = { [name: string]: FileSystemNode }
 type FileSystemNode = FileNode | DirNode
 type LineType = 'cmd' | 'out'
-interface Line { type: LineType; text: string; cwd?: string[] }
+interface Line {
+  type: LineType
+  text: string
+  cwd?: string[]
+}
 
 /** Fake filesystem */
 const FS: DirNode = reactive<DirNode>({
@@ -106,7 +110,10 @@ const resolvePath = (input: string, base: string[] = cwd.value): string[] => {
   const result: string[] = input.startsWith('/') ? [] : [...base]
   for (const p of parts) {
     if (p === '.') continue
-    if (p === '..') { if (result.length > 0) result.pop(); continue }
+    if (p === '..') {
+      if (result.length > 0) result.pop()
+      continue
+    }
     result.push(p)
   }
   return result
@@ -115,15 +122,21 @@ const resolvePath = (input: string, base: string[] = cwd.value): string[] => {
 const listDir = (pathArr: string[]): { entries: [string, boolean][] } | { error: string } => {
   const node: FileSystemNode | undefined = getNodeFrom(pathArr)
   if (!isDir(node)) return { error: 'Not a directory' }
-  const entries: [string, boolean][] = Object.keys(node).sort().map((name: string): [string, boolean] => {
-    const child: FileSystemNode = node[name]
-    return [name, isDir(child)]
-  })
+  const entries: [string, boolean][] = Object.keys(node)
+    .sort()
+    .map((name: string): [string, boolean] => {
+      const child: FileSystemNode = node[name]
+      return [name, isDir(child)]
+    })
   return { entries }
 }
 
-const addOut = (text: string = ''): void => { lines.value.push({ type: 'out', text }) }
-const addCmd = (text: string, cwdSnap: string[]): void => { lines.value.push({ type: 'cmd', text, cwd: [...cwdSnap] }) }
+const addOut = (text: string = ''): void => {
+  lines.value.push({ type: 'out', text })
+}
+const addCmd = (text: string, cwdSnap: string[]): void => {
+  lines.value.push({ type: 'cmd', text, cwd: [...cwdSnap] })
+}
 
 const scrollToBottom = (): void => {
   void nextTick(() => {
@@ -140,16 +153,24 @@ const run = (raw: string): void => {
 
   const input: string = (raw || '').trim()
   addCmd(input, cwd.value)
-  if (input) { history.value.push(input); historyIndex = history.value.length }
+  if (input) {
+    history.value.push(input)
+    historyIndex = history.value.length
+  }
 
   const parts: string[] = input.split(/\s+/).filter(Boolean)
   const cmd: string = (parts[0] ?? '').toLowerCase()
   const args: string[] = parts.slice(1)
 
   switch (cmd) {
-    case '': break
-    case 'clear': lines.value = []; break
-    case 'pwd': addOut(formatPath(cwd.value)); break
+    case '':
+      break
+    case 'clear':
+      lines.value = []
+      break
+    case 'pwd':
+      addOut(formatPath(cwd.value))
+      break
     case 'ls': {
       const target: string[] = resolvePath(args[0] ?? '', cwd.value)
       const res = listDir(target)
@@ -165,8 +186,11 @@ const run = (raw: string): void => {
       else cwd.value = target
       break
     }
-    case 'help': addOut('Available commands: ls, cd, pwd, clear, help'); break
-    default: if (cmd) addOut(`command not found: ${cmd}`)
+    case 'help':
+      addOut('Available commands: ls, cd, pwd, clear, help')
+      break
+    default:
+      if (cmd) addOut(`command not found: ${cmd}`)
   }
 
   buffer.value = ''
@@ -182,8 +206,9 @@ const navHistory = (delta: number): void => {
   // put caret at end
   void nextTick(() => {
     // Vuetify exposes underlying input via $el; this keeps it simple:
-    const el: HTMLInputElement | null =
-      (inputEl.value?.$el?.querySelector('input') as HTMLInputElement | null)
+    const el: HTMLInputElement | null = inputEl.value?.$el?.querySelector(
+      'input',
+    ) as HTMLInputElement | null
     const len: number = buffer.value.length
     el?.setSelectionRange?.(len, len)
   })
@@ -194,8 +219,9 @@ const focusInput = (): void => {
   // prefer component method, fall back to querying the native input
   if (inputEl.value?.focus) inputEl.value.focus()
   else {
-    const el: HTMLInputElement | null =
-      (inputEl.value?.$el?.querySelector('input') as HTMLInputElement | null)
+    const el: HTMLInputElement | null = inputEl.value?.$el?.querySelector(
+      'input',
+    ) as HTMLInputElement | null
     el?.focus()
   }
 }
@@ -212,7 +238,7 @@ const tabComplete = (): void => {
     const node = getNodeFrom(basePath)
     if (!isDir(node)) return
 
-    const matches = Object.keys(node).filter(name => name.startsWith(arg))
+    const matches = Object.keys(node).filter((name) => name.startsWith(arg))
     suggestions.value = matches
 
     if (matches.length === 1) {
@@ -223,7 +249,6 @@ const tabComplete = (): void => {
     }
   }
 }
-
 
 /** Lifecycle */
 onMounted((): void => {
@@ -244,7 +269,7 @@ onMounted((): void => {
 
   font-size: 16px !important;
   font-weight: 600 !important;
-  
+
   min-height: 24px !important;
 
   background-color: transparent !important;
@@ -257,7 +282,7 @@ onMounted((): void => {
 }
 
 .cursor-blink::after {
-  content: "";
+  content: '';
   position: absolute;
   padding-top: 5px;
   margin-left: 1px;

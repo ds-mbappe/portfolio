@@ -1,9 +1,6 @@
 <template>
   <transition v-if="isViewMode" name="fade-transition">
-    <div
-      v-if="isViewMode"
-      class="w-full h-full flex relative justify-center bg-black"
-    >
+    <div v-if="isViewMode" class="w-full h-full flex relative justify-center bg-black">
       <img
         :src="selectedPhoto?.dataUrl"
         :alt="`Photo`"
@@ -11,12 +8,7 @@
       />
 
       <div class="absolute left-3 top-3">
-        <v-btn
-          icon="mdi-arrow-left"
-          variant="text"
-          size="small"
-          @click="isViewMode = false"
-        />
+        <v-btn icon="mdi-arrow-left" variant="text" size="small" @click="isViewMode = false" />
       </div>
 
       <div class="absolute right-3 top-3">
@@ -43,14 +35,16 @@
           @click="selectAndDisplayPhoto(photo)"
         />
       </div>
-  
+
       <div class="flex flex-col text-center">
         <p class="text-base font-semibold">
           {{ `${photos.length} Photos` }}
         </p>
-  
+
         <p class="text-sm text-gray-500">
-          {{ `Last photo taken at ${dayjs(photos[photos.length - 1].capturedAt).format('ddd MMM YYYY, HH:mm')}` }}
+          {{
+            `Last photo taken at ${dayjs(photos[photos.length - 1].capturedAt).format('ddd MMM YYYY, HH:mm')}`
+          }}
         </p>
       </div>
     </div>
@@ -64,11 +58,11 @@
 </template>
 
 <script setup lang="ts">
-import { storeToRefs } from 'pinia';
-import { useGlobalStore } from '@/stores/global';
-import dayjs from 'dayjs';
-import { ref } from 'vue';
-import type { Photo } from '@/types';
+import { storeToRefs } from 'pinia'
+import { useGlobalStore } from '@/stores/global'
+import dayjs from 'dayjs'
+import { ref } from 'vue'
+import type { Photo } from '@/types'
 
 const { cameraPhotos: photos } = storeToRefs(useGlobalStore())
 

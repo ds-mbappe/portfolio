@@ -10,12 +10,12 @@ export const useClock = (updateInterval = 1000) => {
   const updateTime = () => {
     currentTime.value = moment().format('HH:mm')
     currentDate.value = moment().format('dddd, MMM D')
-    currentDateTime.value = moment().format("ddd MMM D HH:mm")
+    currentDateTime.value = moment().format('ddd MMM D HH:mm')
   }
 
   const startClock = () => {
     if (interval) return
-    
+
     updateTime()
     interval = setInterval(updateTime, updateInterval)
   }

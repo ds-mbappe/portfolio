@@ -6,12 +6,14 @@ const foldersPersistKey = 'desktop.folders'
 const deletedFoldersPersistKey = 'desktop.folders.deleted'
 
 function uuid() {
-  return (crypto?.randomUUID?.() ??
-    'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, c => {
+  return (
+    crypto?.randomUUID?.() ??
+    'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c) => {
       const r = (Math.random() * 16) | 0
       const v = c === 'x' ? r : (r & 0x3) | 0x8
       return v.toString(16)
-    }))
+    })
+  )
 }
 
 export const useFolderStore = defineStore('desktop', {
@@ -22,10 +24,10 @@ export const useFolderStore = defineStore('desktop', {
 
   getters: {
     selected(state) {
-      return state.folders.find(f => f.id === state.selectedId) ?? null
+      return state.folders.find((f) => f.id === state.selectedId) ?? null
     },
     names(state) {
-      return new Set(state.folders.map(f => f.name))
+      return new Set(state.folders.map((f) => f.name))
     },
   },
 
@@ -38,18 +40,16 @@ export const useFolderStore = defineStore('desktop', {
           const parsed = JSON.parse(raw) as Folder[]
 
           if (Array.isArray(parsed)) {
-            this.folders = parsed.map(f => ({ ...f, isRenaming: false }))
+            this.folders = parsed.map((f) => ({ ...f, isRenaming: false }))
           }
         }
-      } catch {
-        
-      }
+      } catch {}
     },
     save() {
       localStorage.setItem(foldersPersistKey, JSON.stringify(this.folders))
     },
     uniqueName(base = 'Untitled Folder') {
-      const names = new Set(this.folders.map(f => f.name))
+      const names = new Set(this.folders.map((f) => f.name))
 
       if (!names.has(base)) return base
 
@@ -60,7 +60,7 @@ export const useFolderStore = defineStore('desktop', {
       return `${base} (${n})`
     },
     makeUniqueAgainstOthers(candidate: string, id: string) {
-      const taken = new Set(this.folders.filter(f => f.id !== id).map(f => f.name))
+      const taken = new Set(this.folders.filter((f) => f.id !== id).map((f) => f.name))
 
       if (!taken.has(candidate)) return candidate
 
@@ -87,16 +87,16 @@ export const useFolderStore = defineStore('desktop', {
       return id
     },
     removeFolder(id: string) {
-      if (!id) return;
+      if (!id) return
 
       const deletedFolder = this.folders.find((folder) => folder.id === id)
       const globalStore = useGlobalStore()
-      
+
       globalStore.deletedElements.push(deletedFolder)
 
       localStorage.setItem(deletedFoldersPersistKey, JSON.stringify(globalStore.deletedElements))
 
-      this.folders = this.folders.filter(f => f.id !== id)
+      this.folders = this.folders.filter((f) => f.id !== id)
 
       if (this.selectedId === id) {
         this.selectedId = null
@@ -105,12 +105,12 @@ export const useFolderStore = defineStore('desktop', {
       this.save()
     },
     moveFolder(id: string, x: number, y: number) {
-      const f = this.folders.find(f => f.id === id)
+      const f = this.folders.find((f) => f.id === id)
 
       if (!f) return
 
-      f.x = x;
-      f.y = y;
+      f.x = x
+      f.y = y
 
       this.save()
     },
@@ -118,16 +118,16 @@ export const useFolderStore = defineStore('desktop', {
       this.selectedId = id
     },
     startRename(id: string) {
-      this.folders.forEach(x => (x.isRenaming = false))
+      this.folders.forEach((x) => (x.isRenaming = false))
 
-      const f = this.folders.find(f => f.id === id)
+      const f = this.folders.find((f) => f.id === id)
 
       if (!f) return
 
       f.isRenaming = true
     },
     confirmRename(id: string, nextNameRaw: string) {
-      const f = this.folders.find(f => f.id === id)
+      const f = this.folders.find((f) => f.id === id)
 
       if (!f) return
 
@@ -142,7 +142,7 @@ export const useFolderStore = defineStore('desktop', {
       this.save()
     },
     cancelRename(id: string) {
-      const f = this.folders.find(f => f.id === id)
+      const f = this.folders.find((f) => f.id === id)
 
       if (f) {
         f.isRenaming = false

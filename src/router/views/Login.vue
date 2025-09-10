@@ -25,7 +25,7 @@
         <p class="text-white text-4xl font-medium text-center">
           {{ currentDate }}
         </p>
-  
+
         <p class="text-white font-medium text-9xl">
           {{ currentTime }}
         </p>
@@ -35,10 +35,7 @@
 
       <div class="flex flex-col gap-2.5 items-center">
         <div class="flex flex-col items-center gap-6">
-          <v-avatar
-            :size="56"
-            :image="siri"
-          />
+          <v-avatar :size="56" :image="siri" />
 
           <p class="text-white font-semibold text-sm">Daniel Stéphane MBAPPE</p>
         </div>
@@ -55,10 +52,10 @@
 
 <script setup lang="ts">
 import sunrise from '@/assets/wallpapers/Sequoia-Sunrise.mp4'
-import siri from '@/assets/siri.png';
-import { useRouter } from 'vue-router';
+import siri from '@/assets/siri.png'
+import { useRouter } from 'vue-router'
 import { useClock } from '@/composables/useClock'
-import { ref } from 'vue';
+import { ref } from 'vue'
 
 const router = useRouter()
 const { currentTime, currentDate } = useClock()

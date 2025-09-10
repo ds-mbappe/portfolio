@@ -14,7 +14,10 @@
       @click="$emit('open', app.id)"
     />
 
-    <div v-if="app?.opened" class="w-1 h-1 rounded-full bg-white dark:bg-black absolute -bottom-1" />
+    <div
+      v-if="app?.opened"
+      class="w-1 h-1 rounded-full bg-white dark:bg-black absolute -bottom-1"
+    />
 
     <!-- Tooltip + Arrow -->
     <div
@@ -35,15 +38,8 @@
 
 <script setup lang="ts">
 import { ref, watch, computed } from 'vue'
-import {
-  useFloating,
-  offset,
-  flip,
-  shift,
-  autoUpdate,
-  arrow as arrowMw
-} from '@floating-ui/vue'
-import type { AppItem } from '@/types';
+import { useFloating, offset, flip, shift, autoUpdate, arrow as arrowMw } from '@floating-ui/vue'
+import type { AppItem } from '@/types'
 
 defineProps<{ app: AppItem }>()
 defineEmits<{ (e: 'open', id: string): void }>()
@@ -51,26 +47,22 @@ defineEmits<{ (e: 'open', id: string): void }>()
 const open = ref(false)
 
 const referenceEl = ref<HTMLElement | null>(null)
-const floatingEl  = ref<HTMLElement | null>(null)
-const arrowEl     = ref<HTMLElement | null>(null)
+const floatingEl = ref<HTMLElement | null>(null)
+const arrowEl = ref<HTMLElement | null>(null)
 
 // Arrow size is 8px (w-2 h-2). Give the tooltip a little extra gap
 const ARROW_SIZE = 8
 
-const { floatingStyles, middlewareData, placement, update } = useFloating(
-  referenceEl,
-  floatingEl,
-  {
-    placement: 'top',
-    middleware: [
-      offset(ARROW_SIZE + 2), // space for the arrow tip
-      flip(),
-      shift(),
-      arrowMw({ element: arrowEl })
-    ],
-    whileElementsMounted: autoUpdate
-  }
-)
+const { floatingStyles, middlewareData, placement, update } = useFloating(referenceEl, floatingEl, {
+  placement: 'top',
+  middleware: [
+    offset(ARROW_SIZE + 2), // space for the arrow tip
+    flip(),
+    shift(),
+    arrowMw({ element: arrowEl }),
+  ],
+  whileElementsMounted: autoUpdate,
+})
 
 watch(open, (isOpen) => {
   if (isOpen) update()
@@ -84,7 +76,7 @@ const arrowInlineStyles = computed(() => {
     top: 'bottom',
     right: 'left',
     bottom: 'top',
-    left: 'right'
+    left: 'right',
   }
 
   const styles: Record<string, string> = {}

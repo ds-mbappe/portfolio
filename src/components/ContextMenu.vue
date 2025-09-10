@@ -4,30 +4,19 @@
     :style="{ left: x + 'px', top: y + 'px' }"
     @click.stop
   >
-    <div
-      class="w-full hover:bg-blue-600 py-0.5"
-      @click="$emit('new')"
-    >
+    <div class="w-full hover:bg-blue-600 py-0.5" @click="$emit('new')">
       <span class="w-full px-2 text-sm">
         {{ 'New Folder' }}
       </span>
     </div>
 
-    <div
-      v-if="isSelected"
-      class="w-full hover:bg-blue-600"
-      @click="$emit('rename')"
-    >
+    <div v-if="isSelected" class="w-full hover:bg-blue-600" @click="$emit('rename')">
       <span class="w-full px-2 text-sm">
         {{ 'Rename' }}
       </span>
     </div>
 
-    <div
-      v-if="isSelected"
-      class="w-full hover:bg-blue-600"
-      @click="$emit('delete')"
-    >
+    <div v-if="isSelected" class="w-full hover:bg-blue-600" @click="$emit('delete')">
       <span class="w-full px-2 text-sm">
         {{ 'Delete' }}
       </span>
@@ -35,19 +24,13 @@
 
     <v-divider class="self-center w-[90%] my-1" />
 
-    <div
-      class="w-full hover:bg-blue-600 py-0.5"
-      @click="$emit('get-info')"
-    >
+    <div class="w-full hover:bg-blue-600 py-0.5" @click="$emit('get-info')">
       <span class="w-full px-2 text-sm">
         {{ 'Get info' }}
       </span>
     </div>
 
-    <div
-      class="w-full hover:bg-blue-600 py-0.5"
-      @click="$emit('change-wallpaper')"
-    >
+    <div class="w-full hover:bg-blue-600 py-0.5" @click="$emit('change-wallpaper')">
       <span class="w-full px-2 text-sm">
         {{ 'Change wallpaper...' }}
       </span>
@@ -63,11 +46,11 @@ defineProps<{
 }>()
 
 defineEmits<{
-  (e: 'new'): void;
-  (e: 'rename'): void;
-  (e: 'close'): void;
-  (e: 'get-info'): void;
-  (e: 'delete'): void;
-  (e: 'change-wallpaper'): void;
+  (e: 'new'): void
+  (e: 'rename'): void
+  (e: 'close'): void
+  (e: 'get-info'): void
+  (e: 'delete'): void
+  (e: 'change-wallpaper'): void
 }>()
 </script>

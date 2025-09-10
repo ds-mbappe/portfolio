@@ -3,7 +3,7 @@
     :class="[
       'fixed inset-0 flex items-center justify-center bg-black text-white select-none',
       'transition-opacity duration-1000',
-      isFading ? 'opacity-0' : 'opacity-100'
+      isFading ? 'opacity-0' : 'opacity-100',
     ]"
     @contextmenu.prevent
   >
@@ -33,9 +33,9 @@
 </template>
 
 <script setup lang="ts">
-import { useRouter } from 'vue-router';
-import { ref, watch, onMounted, computed } from 'vue';
-import logoUrl from '@/assets/apple_logo.png';
+import { useRouter } from 'vue-router'
+import { ref, watch, onMounted, computed } from 'vue'
+import logoUrl from '@/assets/apple_logo.png'
 import sunrise from '@/assets/wallpapers/Sequoia-Sunrise.mp4'
 
 const router = useRouter()
@@ -48,7 +48,7 @@ const videoReady = ref(false)
 const isFading = ref(false)
 
 const displayProgress = computed(() =>
-  videoReady.value ? internalProgress.value : Math.min(internalProgress.value, 99)
+  videoReady.value ? internalProgress.value : Math.min(internalProgress.value, 99),
 )
 
 const startAuto = () => {

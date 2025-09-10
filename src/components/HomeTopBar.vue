@@ -1,5 +1,7 @@
 <template>
-  <div class="w-full h-8 flex justify-between items-center z-2 overflow-hidden select-none cursor-default bg-transparent backdrop-blur-lg px-4">
+  <div
+    class="w-full h-8 flex justify-between items-center z-2 overflow-hidden select-none cursor-default bg-transparent backdrop-blur-lg px-4"
+  >
     <div class="h-full flex items-center gap-5">
       <!-- Apple Logo -->
       <div class="">
@@ -10,14 +12,19 @@
       <p
         class="font-semibold text-sm capitalize cursor-default h-full flex items-center text-white dark:text-black"
       >
-        {{ trashActive ? "Trash" : bottomItems?.find(item => item?.active)?.id }}
+        {{ trashActive ? 'Trash' : bottomItems?.find((item) => item?.active)?.id }}
       </p>
     </div>
 
     <div class="h-full flex items-center gap-4">
       <!-- Battery Percentage -->
       <div class="">
-        <Icon icon="heroicons:battery-50-solid" height="26" width="29" class="text-white dark:text-black" />
+        <Icon
+          icon="heroicons:battery-50-solid"
+          height="26"
+          width="29"
+          class="text-white dark:text-black"
+        />
       </div>
 
       <!-- Siri -->
@@ -31,7 +38,7 @@
       </div>
 
       <!-- Date -->
-      <p base medium class=" text-white dark:text-black text-sm font-semibold">
+      <p base medium class="text-white dark:text-black text-sm font-semibold">
         {{ currentDateTime }}
       </p>
     </div>
@@ -39,11 +46,11 @@
 </template>
 
 <script setup lang="ts">
-import { Icon } from '@iconify/vue';
-import siri from '@/assets/siri.png';
-import { storeToRefs } from 'pinia';
-import { useGlobalStore } from '@/stores/global';
-import { useClock } from '@/composables/useClock';
+import { Icon } from '@iconify/vue'
+import siri from '@/assets/siri.png'
+import { storeToRefs } from 'pinia'
+import { useGlobalStore } from '@/stores/global'
+import { useClock } from '@/composables/useClock'
 
 const { currentDateTime } = useClock()
 

@@ -117,16 +117,20 @@ export const useDraggableArea = (dropZoneRef: { value: HTMLElement | undefined }
     if (!store.items[id]) store.upsert(id, { x: 0, y: 0, isDragging: false })
     nextTick().then(() => clamp(id))
 
-    const downTarget = handleSelector ? el.querySelector<HTMLElement>(handleSelector) ?? el : el
+    const downTarget = handleSelector ? (el.querySelector<HTMLElement>(handleSelector) ?? el) : el
     const onMouseDown = (e: MouseEvent) => startPointerDrag(id, e)
     downTarget.addEventListener('mousedown', onMouseDown)
 
     const stop = scope.run(() =>
-      watch(() => store.items[id], (st) => {
-        if (!st) return
-        el.style.left = `${st.x}px`
-        el.style.top  = `${st.y}px`
-      }, { deep: true, immediate: true })
+      watch(
+        () => store.items[id],
+        (st) => {
+          if (!st) return
+          el.style.left = `${st.x}px`
+          el.style.top = `${st.y}px`
+        },
+        { deep: true, immediate: true },
+      ),
     )!
 
     registered.get(id)!.cleanups.push(() => {

@@ -31,25 +31,57 @@
       tabindex="-1"
     >
       <!-- @mousedown="bringToFront" -->
-      <header class="w-full dd-header h-7 px-2 bg-gray-100 border-b flex items-center justify-between gap-5">
+      <header
+        class="w-full dd-header h-7 px-2 bg-gray-100 border-b flex items-center justify-between gap-5"
+      >
         <v-hover>
-          <template #default="{ isHovering, props }">            
+          <template #default="{ isHovering, props }">
             <div class="flex gap-2 items-center justify-center">
-              <div v-bind="props" role="button" class="w-3 h-3 flex !justify-center !items-center rounded-full bg-red-500" aria-label="Close dialog" @click="close">
+              <div
+                v-bind="props"
+                role="button"
+                class="w-3 h-3 flex !justify-center !items-center rounded-full bg-red-500"
+                aria-label="Close dialog"
+                @click="close"
+              >
                 <Icon v-if="isHovering" icon="bx:x" width="12" height="12" class="text-black" />
               </div>
 
-              <div v-bind="props" role="button" class="w-3 h-3 flex justify-center items-center rounded-full bg-yellow-500" aria-label="Minimize dialog" @click="close">
-                <Icon v-if="isHovering" icon="ic:baseline-minus" width="12" height="12" class="text-black" />
+              <div
+                v-bind="props"
+                role="button"
+                class="w-3 h-3 flex justify-center items-center rounded-full bg-yellow-500"
+                aria-label="Minimize dialog"
+                @click="close"
+              >
+                <Icon
+                  v-if="isHovering"
+                  icon="ic:baseline-minus"
+                  width="12"
+                  height="12"
+                  class="text-black"
+                />
               </div>
-    
-              <div v-bind="props" role="button" class="w-3 h-3 flex justify-center items-center rounded-full bg-green-500" aria-label="Resize dialog" @click="toggleMaxWindowSize">
-                <Icon v-if="isHovering" icon="gridicons:resize" width="8" height="8" class="text-black" />
-              </div>       
+
+              <div
+                v-bind="props"
+                role="button"
+                class="w-3 h-3 flex justify-center items-center rounded-full bg-green-500"
+                aria-label="Resize dialog"
+                @click="toggleMaxWindowSize"
+              >
+                <Icon
+                  v-if="isHovering"
+                  icon="gridicons:resize"
+                  width="8"
+                  height="8"
+                  class="text-black"
+                />
+              </div>
             </div>
           </template>
         </v-hover>
-        
+
         <div class="w-full !flex-1">
           <p class="font-semibold text-sm text-center text-ellipsis line-clamp-1">
             {{ title }}
@@ -58,9 +90,9 @@
 
         <div class="flex gap-2 items-center justify-center">
           <div role="button" class="w-3 h-3 rounded-full" />
-    
+
           <div class="w-3 h-3 rounded-full" />
-    
+
           <div class="w-3 h-3 rounded-full" />
         </div>
       </header>
@@ -147,7 +179,7 @@ const centerDialog = async () => {
   const padB = parseFloat(cs.paddingBottom) || 0
 
   // Size of the *content box* inside the drop zone
-  const contentW = dz.clientWidth  - padL - padR
+  const contentW = dz.clientWidth - padL - padR
   const contentH = dz.clientHeight - padT - padB
 
   const elW = el.offsetWidth
@@ -162,7 +194,7 @@ const centerDialog = async () => {
   // Update store and reflect immediately
   setPos(props.id, x, y)
   el.style.left = `${x}px`
-  el.style.top  = `${y}px`
+  el.style.top = `${y}px`
 }
 
 // Maximize or minimize window
@@ -173,36 +205,39 @@ const toggleMaxWindowSize = () => {
     centerDialog()
   } else {
     isMaximized.value = !isMaximized.value
-  
+
     nextTick(() => {
       const el = root.value
-  
+
       if (el) {
         el.style.left = `0px`
-        el.style.top  = `0px`
+        el.style.top = `0px`
       }
     })
     nextTick()
   }
 }
 
-watch(() => props.modelValue, (open) => {
-  if (open) {
-    const st = items.value[props.id]
-    if (st && (st.x !== 0 || st.y !== 0)) {
-      nextTick(() => {
-        const el = root.value
+watch(
+  () => props.modelValue,
+  (open) => {
+    if (open) {
+      const st = items.value[props.id]
+      if (st && (st.x !== 0 || st.y !== 0)) {
+        nextTick(() => {
+          const el = root.value
 
-        if (el) {
-          el.style.left = `${st.x}px`
-          el.style.top  = `${st.y}px`
-        }
-      })
-    } else {
-      centerDialog()
+          if (el) {
+            el.style.left = `${st.x}px`
+            el.style.top = `${st.y}px`
+          }
+        })
+      } else {
+        centerDialog()
+      }
+
+      nextTick(() => root.value?.focus())
     }
-
-    nextTick(() => root.value?.focus())
-  }
-})
+  },
+)
 </script>

@@ -2,7 +2,7 @@
   <div class="w-full h-full flex-1 flex flex-col !p-2.5">
     <div class="w-full h-full flex-1 flex flex-col relative rounded-lg overflow-hidden">
       <!-- Drop zone -->
-      <div 
+      <div
         ref="dropZone"
         class="relative w-full h-full flex-1 bg-transparent p-4 rounded-lg overflow-hidden"
         tabindex="0"
@@ -22,10 +22,10 @@
           class="absolute flex flex-col items-center rounded-lg cursor-default"
           v-draggable="{
             id: f.id.toString(),
-            handle: '.handle-folder'
+            handle: '.handle-folder',
           }"
           :class="{
-            'bg-blue-800': f.id === selectedId && !f.isRenaming
+            'bg-blue-800': f.id === selectedId && !f.isRenaming,
           }"
           @contextmenu.prevent.stop="openCtx($event, f.id)"
           @dblclick.stop
@@ -49,7 +49,7 @@
               @blur="renameFolder(f.id, renameDraft)"
             />
           </div>
-          
+
           <p
             v-else
             class="text-white text-sm text-center px-1 rounded -translate-y-1.5 select-none"
@@ -127,16 +127,15 @@
         />
       </div>
     </div>
-    
+
     <!-- Toolbar -->
-    <div class="w-full h-[120px] z-0 bg-transparent">
-    </div>
+    <div class="w-full h-[120px] z-0 bg-transparent"></div>
   </div>
 </template>
 
 <script setup lang="ts">
 import { computed, onMounted, reactive, ref } from 'vue'
-import { useDraggableArea } from "@/composables/useDraggableArea"
+import { useDraggableArea } from '@/composables/useDraggableArea'
 import DraggableDialog from './DraggableDialog.vue'
 import Terminal from './miniApps/Terminal.vue'
 import Calendar from './miniApps/Calendar.vue'
@@ -150,10 +149,7 @@ import folderLogo from '@/assets/folder.png'
 import { useFolderStore } from '@/stores/folder'
 import { useDraggablesStore } from '@/stores/draggables'
 
-const {
-  setPos,
-  loadItems: loadDraggables
-} = useDraggablesStore();
+const { setPos, loadItems: loadDraggables } = useDraggablesStore()
 const {
   // selected,
   loadFolders,
@@ -163,10 +159,10 @@ const {
   startRename: startRenamingFolder,
   createFolderAt: createNewFolder,
   removeFolder: deleteFolder,
-} = useFolderStore();
+} = useFolderStore()
 
-const { bottomItems } = storeToRefs(useGlobalStore());
-const { folders, selectedId } = storeToRefs(useFolderStore());
+const { bottomItems } = storeToRefs(useGlobalStore())
+const { folders, selectedId } = storeToRefs(useFolderStore())
 
 onMounted(() => {
   loadFolders()
@@ -238,7 +234,7 @@ const startRenameCtx = () => {
 
   startRenamingFolder(ctx.targetId)
 
-  renameDraft.value = folders.value.find(f => f.id === ctx.targetId)?.name ?? ''
+  renameDraft.value = folders.value.find((f) => f.id === ctx.targetId)?.name ?? ''
 
   // nextTick(() => renameInput.value?.blur())
 
@@ -250,7 +246,7 @@ const createFolderAtCtx = () => {
 
   setPos(id, ctx.x, ctx.y)
 
-  renameDraft.value = folders.value.find(f => f.id === id)?.name ?? ''
+  renameDraft.value = folders.value.find((f) => f.id === id)?.name ?? ''
 
   // nextTick(() => renameInput.value?.blur())
 
