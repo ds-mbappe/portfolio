@@ -3,6 +3,7 @@
     <div class="w-full h-full flex-1 flex flex-col relative rounded-lg overflow-hidden">
       <!-- Drop zone -->
       <div
+        id="dropZone"
         ref="dropZone"
         class="relative w-full h-full flex-1 bg-transparent p-4 rounded-lg overflow-hidden"
         tabindex="0"
@@ -60,57 +61,75 @@
         </div>
 
         <draggable-dialog
+          v-model="bottomItems[1].opened"
+          width="768px"
+          height="560px"
+          title="Safari"
+          :id="'safari'"
+          :drop-zone="dropZone"
+          :z-index="bottomItems[1].zIndex"
+          @bring-to-front="bottomItems[1].zIndex = bottomItems[1].zIndex + 1"
+        >
+          <safari />
+        </draggable-dialog>
+
+        <draggable-dialog
           v-model="bottomItems[2].opened"
+          title="danielstephane - zsh"
           :id="'terminal'"
           :drop-zone="dropZone"
           :z-index="bottomItems[2].zIndex"
-          title="danielstephane - zsh"
+          @bring-to-front="bottomItems[2].zIndex = bottomItems[2].zIndex + 1"
         >
           <terminal />
         </draggable-dialog>
 
         <draggable-dialog
           v-model="bottomItems[6].opened"
-          :id="'calendar'"
           width="1080px"
           height="560px"
-          :z-index="bottomItems[6].zIndex"
-          :drop-zone="dropZone"
           title="Calendar"
+          :id="'calendar'"
+          :drop-zone="dropZone"
+          :z-index="bottomItems[6].zIndex"
+          @bring-to-front="bottomItems[6].zIndex = bottomItems[6].zIndex + 1"
         >
           <calendar />
         </draggable-dialog>
 
         <draggable-dialog
           v-model="bottomItems[4].opened"
-          :id="'camera'"
           width="768px"
           height="560px"
+          title="Camera"
+          :id="'camera'"
           :drop-zone="dropZone"
           :z-index="bottomItems[4].zIndex"
-          title="Camera"
+          @bring-to-front="bottomItems[4].zIndex = bottomItems[4].zIndex + 1"
         >
           <facetime />
         </draggable-dialog>
 
         <draggable-dialog
           v-model="bottomItems[3].opened"
+          title="Photos"
           :id="'photos'"
           :drop-zone="dropZone"
           :z-index="bottomItems[3].zIndex"
-          title="Photos"
+          @bring-to-front="bottomItems[3].zIndex = bottomItems[3].zIndex + 1"
         >
           <photos />
         </draggable-dialog>
 
         <draggable-dialog
           v-model="bottomItems[5].opened"
-          :id="'maps'"
           width="768px"
           height="560px"
+          title="Maps"
+          :id="'maps'"
           :drop-zone="dropZone"
           :z-index="bottomItems[5].zIndex"
-          title="Maps"
+          @bring-to-front="bottomItems[5].zIndex = bottomItems[5].zIndex + 1"
         >
           <maps />
         </draggable-dialog>
@@ -136,7 +155,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted, reactive, ref } from 'vue'
+import { computed, onMounted, onUnmounted, reactive, ref } from 'vue'
 import { useDraggableArea } from '@/composables/useDraggableArea'
 import DraggableDialog from './DraggableDialog.vue'
 import Terminal from './miniApps/Terminal.vue'
@@ -150,10 +169,10 @@ import ContextMenu from './ContextMenu.vue'
 import folderLogo from '@/assets/folder.png'
 import { useFolderStore } from '@/stores/folder'
 import { useDraggablesStore } from '@/stores/draggables'
+import Safari from './miniApps/Safari.vue'
 
 const { setPos, loadItems: loadDraggables } = useDraggablesStore()
 const {
-  // selected,
   loadFolders,
   select: selectFolder,
   confirmRename: renameFolder,
@@ -170,34 +189,11 @@ onMounted(() => {
   loadFolders()
   loadDraggables()
 
-  // Shortcuts
-  window.addEventListener('keydown', (e) => {
-    // const cmd = e.metaKey || e.ctrlKey
-    // if (cmd && e.shiftKey && e.key.toLowerCase() === 'n') {
-    //   e.preventDefault()
+  window.addEventListener('keydown', onAddShortcuts)
+})
 
-    //   const id = createNewFolder(window.innerWidth / 2, window.innerHeight / 2)
-
-    //   renameDraft.value = folders.value.find(f => f.id === id)?.name ?? ''
-
-    //   nextTick(() => renameInput.value?.focus())
-    // }
-
-    // if (e.ctrlKey && e.key === 'F2' && selectedId.value) {
-    //   e.preventDefault()
-
-    //   startRenamingFolder(selectedId.value)
-
-    //   renameDraft.value = selected?.name ?? ''
-
-    //   nextTick(() => renameInput.value?.focus())
-    // }
-    if ((e.key === 'Delete' || e.key === 'Backspace') && selectedId.value) {
-      e.preventDefault()
-
-      deleteFolder(selectedId.value)
-    }
-  })
+onUnmounted(() => {
+  window.removeEventListener('keydown', onAddShortcuts)
 })
 
 const renameDraft = ref('')
@@ -218,10 +214,14 @@ const isFolderSelected = computed(() => {
 })
 
 const openCtx = (e: MouseEvent, folderId: string | null) => {
-  ctx.visible = true
-  ctx.x = e.clientX
-  ctx.y = e.clientY
-  ctx.targetId = folderId
+  const targetElement: HTMLElement = e.target as HTMLElement
+
+  if (targetElement?.id === 'dropZone') {
+    ctx.visible = true
+    ctx.x = e.clientX
+    ctx.y = e.clientY
+    ctx.targetId = folderId
+  }
 }
 
 const closeCtx = () => {
@@ -238,8 +238,6 @@ const startRenameCtx = () => {
 
   renameDraft.value = folders.value.find((f) => f.id === ctx.targetId)?.name ?? ''
 
-  // nextTick(() => renameInput.value?.blur())
-
   closeCtx()
 }
 
@@ -249,8 +247,6 @@ const createFolderAtCtx = () => {
   setPos(id, ctx.x, ctx.y)
 
   renameDraft.value = folders.value.find((f) => f.id === id)?.name ?? ''
-
-  // nextTick(() => renameInput.value?.blur())
 
   closeCtx()
 }
@@ -267,5 +263,23 @@ const getMacInfo = () => {
 
 const changeWallpaper = () => {
   closeCtx()
+}
+
+const onAddShortcuts = (e: KeyboardEvent) => {
+  const cmd = e.metaKey || e.ctrlKey
+
+  if (cmd && e.key.toLowerCase() === 'n') {
+    e.preventDefault()
+
+    if (dropZone.value) {
+      createNewFolder(dropZone.value.clientWidth / 2, dropZone.value.clientHeight / 2)
+    }
+  }
+
+  if ((e.key === 'Delete' || e.key === 'Backspace') && selectedId.value) {
+    e.preventDefault()
+
+    deleteFolder(selectedId.value)
+  }
 }
 </script>

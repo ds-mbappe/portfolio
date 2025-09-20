@@ -30,9 +30,9 @@
       :aria-labelledby="labelId"
       tabindex="-1"
     >
-      <!-- @mousedown="bringToFront" -->
       <header
         class="w-full dd-header h-7 px-2 bg-gray-100 border-b flex items-center justify-between gap-5"
+        @click="bringToFront"
       >
         <v-hover>
           <template #default="{ isHovering, props }">
@@ -110,8 +110,8 @@
 import { Icon } from '@iconify/vue'
 import { storeToRefs } from 'pinia'
 import { useDraggablesStore } from '@/stores/draggables'
+import { computed, ref, nextTick, toRef, watch } from 'vue'
 import { useDraggableArea } from '@/composables/useDraggableArea'
-import { computed, onMounted, onBeforeUnmount, ref, nextTick, toRef, watch } from 'vue'
 
 const { setPos } = useDraggablesStore()
 const { items } = storeToRefs(useDraggablesStore())
@@ -129,7 +129,10 @@ const props = defineProps<{
   dropZone?: HTMLElement | undefined
 }>()
 
-const emit = defineEmits<{ (e: 'update:modelValue', v: boolean): void }>()
+const emit = defineEmits<{
+  (e: 'update:modelValue', v: boolean): void
+  (e: 'bring-to-front'): void
+}>()
 
 const { vDraggable } = useDraggableArea(toRef(props, 'dropZone'))
 const title = computed(() => props.title ?? 'Dialog')
@@ -150,17 +153,9 @@ const close = () => {
   emit('update:modelValue', false)
 }
 
-// const onKeyDown = (e: KeyboardEvent) => {
-//   if (e.key === 'Escape') close()
-// }
-
-onMounted(() => {
-  // document.addEventListener('keydown', onKeyDown)
-})
-
-onBeforeUnmount(() => {
-  // document.removeEventListener('keydown', onKeyDown)
-})
+const bringToFront = () => {
+  emit('bring-to-front')
+}
 
 // Center on first open (if no saved position)
 const centerDialog = async () => {
