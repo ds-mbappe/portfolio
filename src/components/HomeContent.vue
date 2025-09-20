@@ -121,6 +121,8 @@
           :y="ctx.y"
           :is-selected="isFolderSelected"
           @new="createFolderAtCtx"
+          @get-info="getMacInfo"
+          @change-wallpaper="changeWallpaper"
           @delete="deleteFolderAndCloseMenu"
           @rename="startRenameCtx"
           @close="closeCtx"
@@ -256,6 +258,14 @@ const createFolderAtCtx = () => {
 const deleteFolderAndCloseMenu = () => {
   deleteFolder(selectedId.value ?? '')
 
+  closeCtx()
+}
+
+const getMacInfo = () => {
+  closeCtx()
+}
+
+const changeWallpaper = () => {
   closeCtx()
 }
 </script>
