@@ -1,10 +1,18 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import Login from './views/Login.vue'
-import Home from './views/Home.vue'
-import Boot from './views/Boot.vue'
+import Login from '@/router/views/Login.vue'
+import Home from '@/router/views/Home.vue'
+import Boot from '@/router/views/Boot.vue'
+import ThreeScene from '@/router/views/ThreeScene.vue'
 
 const routes = [
-  { path: '/', name: 'boot', component: Boot },
+  { 
+    path: '/', 
+    name: 'three_view', 
+    component: ThreeScene,
+    // Pass which internal route to show
+    props: { internalRoute: '/home' }
+  },
+  { path: '/boot', name: 'boot', component: Boot },
   { path: '/login', name: 'login', component: Login },
   { path: '/home', name: 'home', component: Home },
 
@@ -16,12 +24,12 @@ const router = createRouter({
   routes: routes,
 })
 
-router.beforeEach((to, from) => {
-  const initialLoad = from.matched.length === 0
-  if (initialLoad && to.name !== 'boot') {
-    return { name: 'boot', replace: true }
-  }
-})
+// router.beforeEach((to, from) => {
+//   const initialLoad = from.matched.length === 0
+//   if (initialLoad && to.name !== 'boot') {
+//     return { name: 'boot', replace: true }
+//   }
+// })
 
 // router.afterEach((to, from) => {
 //   const toRoute = to.name
