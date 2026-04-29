@@ -42,6 +42,7 @@
                 role="button"
                 class="w-3 h-3 flex !justify-center !items-center rounded-full bg-red-500"
                 aria-label="Close dialog"
+                @mousedown.stop
                 @click="close"
               >
                 <Icon v-if="isHovering" icon="bx:x" width="12" height="12" class="text-black" />
@@ -52,6 +53,7 @@
                 role="button"
                 class="w-3 h-3 flex justify-center items-center rounded-full bg-yellow-500"
                 aria-label="Minimize dialog"
+                @mousedown.stop
                 @click="close"
               >
                 <Icon
@@ -68,6 +70,7 @@
                 role="button"
                 class="w-3 h-3 flex justify-center items-center rounded-full bg-green-500"
                 aria-label="Resize dialog"
+                @mousedown.stop
                 @click="toggleMaxWindowSize"
               >
                 <Icon

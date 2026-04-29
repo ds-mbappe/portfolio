@@ -8,7 +8,7 @@
         class="relative w-full h-full flex-1 bg-transparent p-4 rounded-lg overflow-hidden"
         tabindex="0"
         @keydown.stop
-        @click="closeCtx"
+        @click="closeCtx()"
         @contextmenu.prevent="openCtx($event, null)"
       >
         <!-- Test draggable div -->
@@ -26,7 +26,7 @@
             handle: '.handle-folder',
           }"
           :class="{
-            'bg-blue-800': f.id === selectedId && !f.isRenaming,
+            'bg-blue-800': f.id === selectedId,
           }"
           @contextmenu.prevent.stop="openCtx($event, f.id)"
           @dblclick.stop
@@ -134,6 +134,19 @@
           <maps />
         </draggable-dialog>
 
+        <draggable-dialog
+          v-model="bottomItems[8].opened"
+          :width="calcWidth"
+          height="560px"
+          title="Calculator"
+          :id="'calculator'"
+          :drop-zone="dropZone"
+          :z-index="bottomItems[8].zIndex"
+          @bring-to-front="bottomItems[8].zIndex = bottomItems[8].zIndex + 1"
+        >
+          <calculator @resize="(w: string) => (calcWidth = w)" />
+        </draggable-dialog>
+
         <ContextMenu
           v-if="ctx.visible"
           :x="ctx.x"
@@ -156,6 +169,7 @@
 
 <script setup lang="ts">
 import { computed, onMounted, onUnmounted, reactive, ref } from 'vue'
+import Calculator from './miniApps/Calculator.vue'
 import { useDraggableArea } from '@/composables/useDraggableArea'
 import DraggableDialog from './DraggableDialog.vue'
 import Terminal from './miniApps/Terminal.vue'
@@ -176,6 +190,7 @@ const {
   loadFolders,
   select: selectFolder,
   confirmRename: renameFolder,
+  cancelAllRename,
   cancelRename: cancelRenameFolder,
   startRename: startRenamingFolder,
   createFolderAt: createNewFolder,
@@ -190,13 +205,16 @@ onMounted(() => {
   loadDraggables()
 
   window.addEventListener('keydown', onAddShortcuts)
+  window.addEventListener('keydown', onEscPressed)
 })
 
 onUnmounted(() => {
   window.removeEventListener('keydown', onAddShortcuts)
+  window.removeEventListener('keydown', onEscPressed)
 })
 
 const renameDraft = ref('')
+const calcWidth = ref('320px')
 const dropZone = ref<HTMLElement>()
 const renameInput = ref<HTMLInputElement | null>(null)
 
@@ -214,31 +232,35 @@ const isFolderSelected = computed(() => {
 })
 
 const openCtx = (e: MouseEvent, folderId: string | null) => {
-  const targetElement: HTMLElement = e.target as HTMLElement
+  // const targetElement: HTMLElement = e.target as HTMLElement
 
-  if (targetElement?.id === 'dropZone') {
-    ctx.visible = true
-    ctx.x = e.clientX
-    ctx.y = e.clientY
-    ctx.targetId = folderId
-  }
+  ctx.visible = true
+  ctx.x = e.clientX
+  ctx.y = e.clientY
+  ctx.targetId = folderId
+  // if (targetElement?.id === 'dropZone') {
+  // }
 }
 
-const closeCtx = () => {
+const closeCtx = (resetSelected: boolean = true) => {
   ctx.visible = false
-  ctx.targetId = null
 
-  selectedId.value = null
+  if (resetSelected) {
+    ctx.targetId = null
+    selectedId.value = null
+  }
 }
 
 const startRenameCtx = () => {
   if (!ctx.targetId) return
 
+  selectedId.value = ctx.targetId
+
   startRenamingFolder(ctx.targetId)
 
   renameDraft.value = folders.value.find((f) => f.id === ctx.targetId)?.name ?? ''
 
-  closeCtx()
+  closeCtx(false)
 }
 
 const createFolderAtCtx = () => {
@@ -263,6 +285,18 @@ const getMacInfo = () => {
 
 const changeWallpaper = () => {
   closeCtx()
+}
+
+const onEscPressed = (e: KeyboardEvent) => {
+  console.log(e.key)
+  if (e.key.toLowerCase() === 'escape') {
+    e.preventDefault();
+
+    cancelAllRename();
+    closeCtx();
+
+    selectedId.value = null;
+  }
 }
 
 const onAddShortcuts = (e: KeyboardEvent) => {

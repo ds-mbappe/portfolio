@@ -73,14 +73,18 @@ const preloadVideo = (): Promise<void> => {
     v.preload = 'auto'
     v.playsInline = true
 
+    let settled = false
     const done = () => {
-      cleanup()
-      resolve()
-    }
-    const cleanup = () => {
+      if (settled) return
+      settled = true
+      clearTimeout(timeout)
       v.removeEventListener('canplaythrough', done)
       v.removeEventListener('loadeddata', done)
+      resolve()
     }
+
+    // Fallback in case Chrome never fires canplaythrough/loadeddata
+    const timeout = setTimeout(done, DURATION_MS + 500)
 
     v.addEventListener('canplaythrough', done, { once: true })
     v.addEventListener('loadeddata', done, { once: true })

@@ -141,6 +141,14 @@ export const useFolderStore = defineStore('desktop', {
 
       this.save()
     },
+    cancelAllRename() {
+      this.folders = this.folders.map((folder) => {
+        return {
+          ...folder,
+          isRenaming: false,
+        }
+      })
+    },
     cancelRename(id: string) {
       const f = this.folders.find((f) => f.id === id)
 

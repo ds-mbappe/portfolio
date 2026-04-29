@@ -4,7 +4,7 @@
     :style="{ left: x + 'px', top: y + 'px' }"
     @click.stop
   >
-    <div class="w-full hover:bg-blue-600 py-0.5" @click="$emit('new')">
+    <div v-if="!isSelected" class="w-full hover:bg-blue-600 py-0.5" @click="$emit('new')">
       <span class="w-full px-2 text-sm">
         {{ 'New Folder' }}
       </span>
@@ -30,9 +30,9 @@
       </span>
     </div>
 
-    <div class="w-full hover:bg-blue-600 py-0.5" @click="$emit('change-wallpaper')">
+    <div v-if="!isSelected" class="w-full hover:bg-blue-600 py-0.5" @click="$emit('change-wallpaper')">
       <span class="w-full px-2 text-sm">
-        {{ 'Change wallpaper...' }}
+        {{ 'Change wallpaper' }}
       </span>
     </div>
   </div>
